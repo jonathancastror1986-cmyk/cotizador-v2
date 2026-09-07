@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar sesión — Servicios Informáticos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+</head>
+<body>
+
+<div id="loginScreen" style="display:flex; min-height:100vh; align-items:center; justify-content:center; background:var(--bg); padding:20px;">
+  <div style="background:var(--paper); border-radius:16px; padding:28px 26px; max-width:340px; width:100%; box-shadow:0 10px 40px rgba(0,0,0,.12);">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
+      <div style="width:30px; height:30px; border-radius:8px; background:var(--copper); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;">
+        <i class="fa-solid fa-bolt"></i>
+      </div>
+      <span style="font-weight:700; font-size:15px;">Servicios Informáticos</span>
+    </div>
+    <h1 id="loginTitle" style="font-size:20px; margin:0 0 4px;">Inicia sesión</h1>
+    <p style="font-size:13px; color:var(--muted); margin:0 0 20px;">Entra a tu panel de cotizaciones.</p>
+
+    <div class="field"><label>Correo</label><input type="email" id="authEmail" placeholder="tucorreo@ejemplo.cl"></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="authPassword" placeholder="••••••••"></div>
+    <div id="authError" style="font-size:12px; color:var(--danger); min-height:16px; margin-bottom:6px;"></div>
+
+    <button type="button" id="loginSubmitBtn" class="btn-primary" style="width:100%;">Iniciar sesión</button>
+    <p style="font-size:11.5px; color:var(--muted); text-align:center; margin-top:14px;">¿Eres cliente y aún no tienes cuenta? Pide una invitación a tu contacto en Servicios Informáticos.</p>
+
+    <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--line); text-align:center;">
+      <a href="legacy-cotizador.html" target="_blank" style="font-size:12px; color:var(--muted); text-decoration:none;">📋 Usar la versión completa (offline) sin iniciar sesión</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function redirigirSegunRol(){
+    const { data: { user } } = await sb.auth.getUser();
+    const { data: profile } = await sb.from('profiles').select('role').eq('id', user.id).single();
+    window.location.href = (profile && profile.role === 'admin') ? 'pages/dashboard.html' : 'pages/portal-inicio.html';
+  }
+  async function checkExistingSession(){
+    const { data: { session } } = await sb.auth.getSession();
+    if(session) redirigirSegunRol();
+  }
+  async function handleLogin(email, password){
+    const errEl = document.getElementById('authError');
+    errEl.style.color = 'var(--danger)';
+    errEl.textContent = '';
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){ errEl.textContent = 'No se pudo iniciar sesión: revisa tu correo y contraseña.'; return; }
+    redirigirSegunRol();
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    checkExistingSession();
+
+    document.getElementById('loginSubmitBtn').addEventListener('click', ()=>{
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      if(!email || !password){ document.getElementById('authError').textContent = 'Completa correo y contraseña.'; return; }
+      handleLogin(email, password);
+    });
+  });
+</script>
+</body>
+</html>

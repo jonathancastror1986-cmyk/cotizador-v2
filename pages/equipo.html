@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equipo — Servicios Informáticos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="app-sidebar" id="appSidebar"></aside>
+  <div class="app-main">
+    <div class="app-topbar">
+      <div style="display:flex; align-items:center;">
+        <button class="app-mobile-toggle" id="mobileNavToggle"><i class="fa-solid fa-bars"></i></button>
+        <h1>Equipo</h1>
+      </div>
+      <div class="user-box">
+        <a href="../legacy-cotizador.html" target="_blank" class="btn-ghost" style="padding:6px 12px; font-size:12px; text-decoration:none; color:var(--ink); background:var(--signal-soft); border-color:var(--signal);">📋 Versión completa (offline)</a>
+        <span id="currentUserLabel"></span>
+        <span class="status-badge" id="currentUserRole"></span>
+        <button type="button" id="logoutBtn" class="btn-ghost" style="padding:6px 12px; font-size:12px;">Salir</button>
+      </div>
+    </div>
+    <div class="app-content">
+      <div class="wrap">
+
+        <div class="panel">
+          <h2>Cómo agregar a alguien a tu equipo</h2>
+          <p style="font-size:12.5px; color:var(--muted); margin-top:0;">
+            1. Pídele a la persona que entre a esta página y se <b>registre</b> con su correo (botón "¿No tienes cuenta? Regístrate" en el login).<br>
+            2. Cuando aparezca en la lista de abajo, elige su rol y ponle un código corto (solo para técnicos, ej: T001).<br>
+            3. Listo — ya puede iniciar sesión y (si es técnico) usar su código para sincronizar desde la versión offline.
+          </p>
+        </div>
+
+        <div class="panel">
+          <h2>Todas las personas registradas</h2>
+          <input type="text" id="equipoSearch" placeholder="Buscar por nombre..." style="margin-bottom:12px;">
+          <div id="equipoList"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/data/tecnicos.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/nav.js"></script>
+<script>renderSidebar('equipo');</script>
+<script src="../js/pages/equipo-page.js"></script>
+<script src="../js/auth-guard.js"></script>
+</body>
+</html>
