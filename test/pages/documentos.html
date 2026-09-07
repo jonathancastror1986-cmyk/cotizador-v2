@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documentos — Servicios Informáticos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="app-sidebar" id="appSidebar"></aside>
+  <div class="app-main">
+    <div class="app-topbar">
+      <div style="display:flex; align-items:center;">
+        <button class="app-mobile-toggle" id="mobileNavToggle"><i class="fa-solid fa-bars"></i></button>
+        <h1>Documentos</h1>
+      </div>
+      <div class="user-box">
+        <a href="../legacy-cotizador.html" target="_blank" class="btn-ghost" style="padding:6px 12px; font-size:12px; text-decoration:none; color:var(--ink); background:var(--signal-soft); border-color:var(--signal);">📋 Versión completa (offline)</a>
+        <span id="currentUserLabel"></span>
+        <span class="status-badge" id="currentUserRole"></span>
+        <button type="button" id="logoutBtn" class="btn-ghost" style="padding:6px 12px; font-size:12px;">Salir</button>
+      </div>
+    </div>
+    <div class="app-content">
+      <div class="wrap">
+
+        <div class="panel">
+          <div style="display:flex; gap:8px; margin-bottom:14px;">
+            <button type="button" class="btn-primary" id="showCompraFormBtn" style="flex:1;">➕ Documento de compra</button>
+            <button type="button" class="btn-ghost" id="showVentaFormBtn" style="flex:1;">➕ Documento de venta</button>
+          </div>
+
+          <div id="compraFormSection">
+            <h2>Compras (facturas/boletas de proveedores)</h2>
+            <div class="field-row">
+              <div class="field"><input type="text" id="compraProveedor" placeholder="Proveedor"></div>
+              <div class="field" style="flex:0 0 140px;">
+                <select id="compraTipo">
+                  <option value="factura">Factura afecta</option>
+                  <option value="factura_exenta">Factura exenta</option>
+                  <option value="boleta">Boleta</option>
+                </select>
+              </div>
+              <div class="field" style="flex:0 0 120px;"><input type="number" id="compraMonto" placeholder="Monto"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><input type="number" id="compraIvaRecuperable" placeholder="IVA recuperable (real)"></div>
+              <div class="field"><input type="number" id="compraIvaNoRecuperable" placeholder="IVA no recuperable"></div>
+              <div class="field"><select id="compraLinkedOt"><option value="">Sin asignar a OT</option></select></div>
+              <div class="field" style="flex:0 0 auto;"><button type="button" id="addCompraBtn" class="btn-ghost">+ Agregar</button></div>
+              <div class="field" style="flex:0 0 auto;"><button type="button" id="cancelEditCompraBtn" class="btn-ghost" style="display:none;" onclick="cancelarEdicionCompra()">Cancelar edición</button></div>
+            </div>
+            <div id="comprasList"></div>
+          </div>
+
+          <div id="ventaFormSection" style="display:none;">
+            <h2>Documento de venta (factura/boleta emitida a tu cliente)</h2>
+            <div class="field">
+              <label>Elige la OT a la que le vas a emitir el documento</label>
+              <select id="ventaOtSelect"><option value="">Elige una OT...</option></select>
+            </div>
+            <div id="ventaFormFields" style="display:none; margin-top:12px;">
+              <div class="field-row">
+                <div class="field"><label>Tipo de documento</label>
+                  <select id="ventaDocTipo">
+                    <option value="boleta_honorarios">Boleta de honorarios</option>
+                    <option value="boleta">Boleta</option>
+                    <option value="factura">Factura</option>
+                    <option value="factura_exenta">Factura exenta</option>
+                  </select>
+                </div>
+                <div class="field"><label>N° de documento</label><input type="text" id="ventaDocNumero" placeholder="Ej: 1024"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>RUT del cliente</label><input type="text" id="ventaDocRut" placeholder="76.123.456-7"></div>
+                <div class="field"><label>Razón social</label><input type="text" id="ventaDocRazonSocial" placeholder="Nombre / empresa"></div>
+              </div>
+              <div class="field-row">
+                <div class="field"><label>Monto neto</label><input type="number" id="ventaDocNeto" placeholder="Neto"></div>
+                <div class="field"><label>IVA</label><input type="number" id="ventaDocIva" placeholder="IVA"></div>
+                <div class="field"><label>IVA no recuperable</label><input type="number" id="ventaDocIvaNoRec" placeholder="IVA no recuperable"></div>
+              </div>
+              <button type="button" id="ventaCalcIvaBtn" class="btn-ghost" style="width:100%; font-size:12px; margin-bottom:10px;">🧮 Calcular IVA (19%) sobre el neto</button>
+              <button type="button" id="saveVentaDocBtn" class="btn-primary" style="width:100%;">Guardar documento de venta</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Comparar con SII</h2>
+          <p style="font-size:12.5px; color:var(--muted); margin-top:0;">
+            Sube el Excel exportado del Registro de Compras y Ventas del SII para ver si falta cargar algo, o si te falta declarar algo tuyo.
+          </p>
+          <input type="file" id="siiExcelInput" accept=".xlsx,.xls">
+          <div id="siiCompareResults" style="margin-top:14px;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/data/cotizaciones.js"></script>
+<script src="../js/data/compras.js"></script>
+<script src="../js/nav.js"></script>
+<script>renderSidebar('documentos');</script>
+<script src="../js/pages/documentos-page.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/auth-guard.js"></script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perfil de mi empresa — Servicios Informáticos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="app-sidebar" id="appSidebar"></aside>
+  <div class="app-main">
+    <div class="app-topbar">
+      <div style="display:flex; align-items:center;">
+        <button class="app-mobile-toggle" id="mobileNavToggle"><i class="fa-solid fa-bars"></i></button>
+        <h1>Perfil de mi empresa</h1>
+      </div>
+      <div class="user-box">
+        <a href="../legacy-cotizador.html" target="_blank" class="btn-ghost" style="padding:6px 12px; font-size:12px; text-decoration:none; color:var(--ink); background:var(--signal-soft); border-color:var(--signal);">📋 Versión completa (offline)</a>
+        <span id="currentUserLabel"></span>
+        <span class="status-badge" id="currentUserRole"></span>
+        <button type="button" id="logoutBtn" class="btn-ghost" style="padding:6px 12px; font-size:12px;">Salir</button>
+      </div>
+    </div>
+    <div class="app-content">
+      <div class="wrap">
+
+        <div class="panel">
+          <h2>Datos por defecto</h2>
+          <p style="font-size:12.5px; color:var(--muted); margin-top:0;">
+            Se guardan una sola vez y se aplican automático a las cotizaciones nuevas — no tienes que volver a escribirlos cada vez.
+          </p>
+          <div class="field"><label>Nombre de tu empresa/servicio</label><input id="profileNombre" placeholder="Ej: Jonathan Castro"></div>
+          <div class="field" style="margin-top:8px;"><label>Descripción corta</label><input id="profileTagline" placeholder="Ej: Servicios Informáticos"></div>
+          <div class="field" style="margin-top:8px;"><label>Tu RUT (para certificados y documentos)</label><input id="profileRut" placeholder="Ej: 12.345.678-9"></div>
+          <div class="field" style="margin-top:8px;"><label>% Retención SII vigente (boleta de honorarios)</label><input id="profileRetentionPct" type="number" step="0.01" min="0" max="100" placeholder="Ej: 14.5"></div>
+          <div class="field" style="margin-top:8px;"><label>Forma de pago preferida por defecto</label>
+            <select id="profileDefaultPaymentMethod">
+              <option value="transferencia">Transferencia bancaria</option>
+              <option value="efectivo">Efectivo</option>
+              <option value="tarjeta_debito">Tarjeta de débito</option>
+              <option value="tarjeta_credito">Tarjeta de crédito</option>
+              <option value="orden_pago">Orden de pago externa</option>
+            </select>
+          </div>
+          <div class="field" style="margin-top:8px;"><label>Tipo de documento preferido por defecto</label>
+            <select id="profileDefaultDocType">
+              <option value="boleta_honorarios">Boleta de honorarios</option>
+              <option value="boleta">Boleta</option>
+              <option value="factura">Factura</option>
+              <option value="factura_exenta">Factura exenta</option>
+            </select>
+          </div>
+          <button type="button" id="saveProfileBtn" class="btn-primary" style="width:100%; margin-top:16px;">Guardar perfil</button>
+          <div id="profileSaveStatus" style="font-size:12px; margin-top:8px; color:var(--signal);"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Equipo</h2>
+          <p style="font-size:12.5px; color:var(--muted); margin-top:0;">
+            Para agregar técnicos, cambiar roles, o asignar códigos, ve a <a href="equipo.html">la página Equipo</a> en el menú lateral.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/data/perfil.js"></script>
+<script src="../js/data/tecnicos.js"></script>
+<script src="../js/nav.js"></script>
+<script>renderSidebar('perfil');</script>
+<script src="../js/pages/perfil-page.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/auth-guard.js"></script>
+</body>
+</html>
