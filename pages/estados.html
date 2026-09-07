@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estados de cotizaciones — Servicios Informáticos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="app-sidebar" id="appSidebar"></aside>
+  <div class="app-main">
+    <div class="app-topbar">
+      <div style="display:flex; align-items:center;">
+        <button class="app-mobile-toggle" id="mobileNavToggle"><i class="fa-solid fa-bars"></i></button>
+        <h1>Consulta de estados de cotizaciones</h1>
+      </div>
+      <div class="user-box">
+        <a href="../legacy-cotizador.html" target="_blank" class="btn-ghost" style="padding:6px 12px; font-size:12px; text-decoration:none; color:var(--ink); background:var(--signal-soft); border-color:var(--signal);">📋 Versión completa (offline)</a>
+        <span id="currentUserLabel"></span>
+        <span class="status-badge" id="currentUserRole"></span>
+        <button type="button" id="logoutBtn" class="btn-ghost" style="padding:6px 12px; font-size:12px;">Salir</button>
+      </div>
+    </div>
+    <div class="app-content">
+      <div class="wrap">
+
+        <div class="panel">
+          <h2>Por cotización: pago, documento e IVA</h2>
+          <p style="font-size:12.5px; color:var(--muted); margin-top:-8px;">
+            Vista de solo consulta. Para editar una cotización, ábrela desde "Cotizaciones" o el "Consultor de OTs".
+          </p>
+          <div class="field-row">
+            <div class="field"><input type="text" id="estadosSearch" placeholder="Buscar por N° de OT o cliente..."></div>
+            <div class="field" style="flex:0 0 190px;">
+              <select id="estadosPagoFilter">
+                <option value="">Cualquier forma de pago</option>
+                <option value="transferencia">Transferencia</option>
+                <option value="efectivo">Efectivo</option>
+                <option value="tarjeta_debito">Débito</option>
+                <option value="tarjeta_credito">Crédito</option>
+                <option value="orden_pago">Orden de pago externa</option>
+                <option value="cheque">Cheque</option>
+                <option value="tarjeta">Tarjeta</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field" style="flex:0 0 190px;">
+              <select id="estadosDocFilter">
+                <option value="">Cualquier documento</option>
+                <option value="sin_documento">Sin documento</option>
+                <option value="boleta">Boleta</option>
+                <option value="factura">Factura</option>
+                <option value="factura_exenta">Factura exenta</option>
+                <option value="boleta_honorarios">Boleta de honorarios</option>
+              </select>
+            </div>
+            <div class="field" style="flex:0 0 170px;">
+              <select id="estadosPagadoClienteFilter">
+                <option value="">Pagado por cliente: todos</option>
+                <option value="si">Pagado</option>
+                <option value="no">Pendiente</option>
+              </select>
+            </div>
+            <div class="field" style="flex:0 0 190px;">
+              <select id="estadosIvaFilter">
+                <option value="">IVA: todos</option>
+                <option value="pagado">IVA pagado</option>
+                <option value="declarado">Declarado, no pagado</option>
+                <option value="borrador">Pendiente</option>
+                <option value="no_aplica">No aplica</option>
+              </select>
+            </div>
+          </div>
+          <div id="estadosList" style="margin-top:12px;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/data/clientes.js"></script>
+<script src="../js/data/cotizaciones.js"></script>
+<script src="../js/data/tecnicos.js"></script>
+<script src="../js/totals.js"></script>
+<script src="../js/badges.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/nav.js"></script>
+<script>renderSidebar('estados');</script>
+<script src="../js/pages/estados-page.js"></script>
+<script src="../js/auth-guard.js"></script>
+</body>
+</html>

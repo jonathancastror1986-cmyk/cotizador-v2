@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar sesión — Servicios Informáticos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+</head>
+<body>
+
+<div id="loginScreen" style="display:flex; min-height:100vh; align-items:center; justify-content:center; background:var(--bg); padding:20px;">
+  <div style="background:var(--paper); border-radius:16px; padding:28px 26px; max-width:340px; width:100%; box-shadow:0 10px 40px rgba(0,0,0,.12);">
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:20px;">
+      <div style="width:30px; height:30px; border-radius:8px; background:var(--copper); display:flex; align-items:center; justify-content:center; color:#fff; font-weight:700;">
+        <i class="fa-solid fa-bolt"></i>
+      </div>
+      <span style="font-weight:700; font-size:15px;">Servicios Informáticos</span>
+    </div>
+    <h1 id="loginTitle" style="font-size:20px; margin:0 0 4px;">Inicia sesión</h1>
+    <p style="font-size:13px; color:var(--muted); margin:0 0 20px;">Entra a tu panel de cotizaciones.</p>
+
+    <input type="hidden" id="authMode" value="login">
+    <div class="field"><label>Correo</label><input type="email" id="authEmail" placeholder="tucorreo@ejemplo.cl"></div>
+    <div class="field"><label>Contraseña</label><input type="password" id="authPassword" placeholder="••••••••"></div>
+    <div id="authError" style="font-size:12px; color:var(--danger); min-height:16px; margin-bottom:6px;"></div>
+
+    <button type="button" id="loginSubmitBtn" class="btn-primary" style="width:100%;">Iniciar sesión</button>
+    <button type="button" id="authToggleMode" style="width:100%; background:none; margin-top:12px; color:var(--copper); font-weight:600;">¿No tienes cuenta? Regístrate</button>
+
+    <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--line); text-align:center;">
+      <a href="legacy-cotizador.html" target="_blank" style="font-size:12px; color:var(--muted); text-decoration:none;">📋 Usar la versión completa (offline) sin iniciar sesión</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  async function checkExistingSession(){
+    const { data: { session } } = await sb.auth.getSession();
+    if(session) window.location.href = 'pages/dashboard.html';
+  }
+  async function handleLogin(email, password){
+    const errEl = document.getElementById('authError');
+    errEl.style.color = 'var(--danger)';
+    errEl.textContent = '';
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if(error){ errEl.textContent = 'No se pudo iniciar sesión: revisa tu correo y contraseña.'; return; }
+    window.location.href = 'pages/dashboard.html';
+  }
+  async function handleSignup(email, password){
+    const errEl = document.getElementById('authError');
+    errEl.style.color = 'var(--danger)';
+    errEl.textContent = '';
+    const { data, error } = await sb.auth.signUp({ email, password });
+    if(error){ errEl.textContent = 'No se pudo crear la cuenta: ' + (error.message || 'intenta de nuevo.'); return; }
+    if(data.session){ window.location.href = 'pages/dashboard.html'; }
+    else {
+      errEl.style.color = 'var(--signal)';
+      errEl.textContent = 'Cuenta creada. Revisa tu correo para confirmar antes de entrar.';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    checkExistingSession();
+
+    document.getElementById('loginSubmitBtn').addEventListener('click', ()=>{
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value;
+      if(!email || !password){ document.getElementById('authError').textContent = 'Completa correo y contraseña.'; return; }
+      if(document.getElementById('authMode').value === 'signup') handleSignup(email, password);
+      else handleLogin(email, password);
+    });
+
+    document.getElementById('authToggleMode').addEventListener('click', ()=>{
+      const modeInput = document.getElementById('authMode');
+      const isSignup = modeInput.value === 'signup';
+      modeInput.value = isSignup ? 'login' : 'signup';
+      document.getElementById('loginTitle').textContent = isSignup ? 'Inicia sesión' : 'Crea tu cuenta';
+      document.getElementById('loginSubmitBtn').textContent = isSignup ? 'Iniciar sesión' : 'Crear cuenta';
+      document.getElementById('authToggleMode').textContent = isSignup ? '¿No tienes cuenta? Regístrate' : '¿Ya tienes cuenta? Inicia sesión';
+      document.getElementById('authError').textContent = '';
+    });
+  });
+</script>
+</body>
+</html>

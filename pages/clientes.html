@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clientes — Servicios Informáticos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="app-sidebar" id="appSidebar"></aside>
+  <div class="app-main">
+    <div class="app-topbar">
+      <div style="display:flex; align-items:center;">
+        <button class="app-mobile-toggle" id="mobileNavToggle"><i class="fa-solid fa-bars"></i></button>
+        <h1>Clientes</h1>
+      </div>
+      <div class="user-box">
+        <a href="../legacy-cotizador.html" target="_blank" class="btn-ghost" style="padding:6px 12px; font-size:12px; text-decoration:none; color:var(--ink); background:var(--signal-soft); border-color:var(--signal);">📋 Versión completa (offline)</a>
+        <span id="currentUserLabel"></span>
+        <span class="status-badge" id="currentUserRole"></span>
+        <button type="button" id="logoutBtn" class="btn-ghost" style="padding:6px 12px; font-size:12px;">Salir</button>
+      </div>
+    </div>
+    <div class="app-content">
+      <div class="wrap">
+
+        <div class="panel">
+          <h2>Agregar cliente</h2>
+          <div class="field-row">
+            <div class="field"><input type="text" id="newClienteNombre" placeholder="Nombre de la empresa/cliente"></div>
+            <div class="field"><input type="text" id="newClienteRut" placeholder="RUT (opcional)"></div>
+            <div class="field" style="flex:0 0 auto;"><button type="button" id="addClienteBtn" class="btn-primary">+ Agregar</button></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Todos tus clientes</h2>
+          <input type="text" id="clienteSearch" placeholder="Buscar por nombre, RUT, o ubicación..." style="margin-bottom:12px;">
+          <div id="clientesList"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="clientDetailModal" style="display:none; position:fixed; inset:0; background:rgba(16,27,51,.5); align-items:center; justify-content:center; z-index:300;">
+  <div class="panel" style="max-width:560px; width:100%; margin:20px; max-height:85vh; overflow-y:auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+      <h2 id="detailClienteNombre" style="margin:0;">Cliente</h2>
+      <button type="button" id="closeClientDetailBtn" class="btn-ghost" style="padding:6px 12px;">✕</button>
+    </div>
+    <div id="detailClienteRut" style="font-size:12.5px; color:var(--muted); margin-bottom:14px; font-family:var(--font-mono);"></div>
+
+    <div style="font-weight:600; font-size:13px; margin-bottom:8px;">Ubicaciones y contactos</div>
+    <div id="detailClienteUbicaciones" style="margin-bottom:10px;"></div>
+    <button type="button" class="btn-ghost" id="toggleAddUbicacionBtn" style="font-size:12px; padding:6px 10px; margin-bottom:18px;">+ Agregar ubicación</button>
+    <div id="addUbicacionFields" style="display:none; margin-bottom:18px; background:var(--rail); padding:12px; border-radius:8px;">
+      <div class="field-row">
+        <div class="field"><input type="text" id="newUbicNombre" placeholder="Nombre (ej: Oficina central)"></div>
+        <div class="field"><input type="text" id="newUbicContacto" placeholder="Persona de contacto"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><input type="text" id="newUbicTelefono" placeholder="Teléfono"></div>
+        <div class="field"><input type="email" id="newUbicEmail" placeholder="Correo"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><input type="text" id="newUbicDireccion" placeholder="Dirección"></div>
+        <div class="field" style="flex:0 0 auto;"><button type="button" class="btn-primary" id="saveNewUbicacionBtn">Guardar</button></div>
+      </div>
+    </div>
+
+    <div style="font-weight:600; font-size:13px; margin-bottom:8px;">Historial de cotizaciones</div>
+    <div id="detailClienteCotizaciones"></div>
+
+    <button type="button" id="deleteClienteBtn" class="btn-danger" style="width:100%; margin-top:18px;">🗑️ Eliminar este cliente</button>
+  </div>
+</div>
+
+<script src="../js/data/clientes.js"></script>
+<script src="../js/data/cotizaciones.js"></script>
+<script src="../js/nav.js"></script>
+<script>renderSidebar('clientes');</script>
+<script src="../js/pages/clientes-page.js"></script>
+<script src="../js/totals.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/auth-guard.js"></script>
+</body>
+</html>

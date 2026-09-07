@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agenda de OTs — Servicios Informáticos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+  #agendaMap{ width:100%; height:420px; border-radius:10px; border:2px solid var(--line); margin-bottom:16px; background:var(--rail); }
+  .agenda-sector-heading{ font-weight:700; font-size:13px; margin:16px 0 6px; color:var(--copper); }
+  .agenda-pin-list-item{ cursor:pointer; }
+  .agenda-pin-list-item:hover{ background:var(--rail); }
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="app-sidebar" id="appSidebar"></aside>
+  <div class="app-main">
+    <div class="app-topbar">
+      <div style="display:flex; align-items:center;">
+        <button class="app-mobile-toggle" id="mobileNavToggle"><i class="fa-solid fa-bars"></i></button>
+        <h1>Agenda de OTs</h1>
+      </div>
+      <div class="user-box">
+        <a href="../legacy-cotizador.html" target="_blank" class="btn-ghost" style="padding:6px 12px; font-size:12px; text-decoration:none; color:var(--ink); background:var(--signal-soft); border-color:var(--signal);">📋 Versión completa (offline)</a>
+        <span id="currentUserLabel"></span>
+        <span class="status-badge" id="currentUserRole"></span>
+        <button type="button" id="logoutBtn" class="btn-ghost" style="padding:6px 12px; font-size:12px;">Salir</button>
+      </div>
+    </div>
+    <div class="app-content">
+      <div class="wrap">
+
+        <div class="panel">
+          <h2>OTs pendientes por fecha de compromiso</h2>
+          <p style="font-size:12.5px; color:var(--muted); margin-top:-8px;">
+            El mapa ubica las direcciones de las OTs pendientes. Agrupa por sector para agendar visitas cercanas el mismo día.
+          </p>
+          <div class="field-row" style="gap:8px; flex-wrap:wrap;">
+            <div class="field" style="flex:0 0 200px;">
+              <select id="agendaSectorFilter">
+                <option value="">Todos los sectores</option>
+                <option value="cercania">Cercanía</option>
+                <option value="medio">Sector medio</option>
+                <option value="oriente_alto">Oriente / alto</option>
+                <option value="extendido">Sector extendido</option>
+                <option value="sin_sector">Sin sector asignado</option>
+              </select>
+            </div>
+            <label style="display:flex; align-items:center; gap:6px; font-size:13px;">
+              <input type="checkbox" id="agendaSoloConFecha" checked> Solo OTs con fecha de compromiso agendada
+            </label>
+            <button type="button" class="btn-ghost" id="geocodeAllBtn" style="font-size:12px;">📍 Ubicar direcciones en el mapa</button>
+            <span id="geocodeStatus" style="font-size:11.5px; color:var(--muted);"></span>
+          </div>
+
+          <div id="agendaMap"></div>
+
+          <div id="agendaList" style="margin-top:8px;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="../js/data/clientes.js"></script>
+<script src="../js/data/cotizaciones.js"></script>
+<script src="../js/data/tecnicos.js"></script>
+<script src="../js/totals.js"></script>
+<script src="../js/badges.js"></script>
+<script src="../js/toast.js"></script>
+<script src="../js/nav.js"></script>
+<script>renderSidebar('agenda');</script>
+<script src="../js/pages/agenda-page.js"></script>
+<script src="../js/auth-guard.js"></script>
+</body>
+</html>
